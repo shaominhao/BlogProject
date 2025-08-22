@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/reset.css">
+</head>
+
+<body>
+    <header class="site-header">
+    <div class="container">
+      <p class="brand">
+        <span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
+      </p>
+      
+      <nav id="site-nav" class="nav">
+        <ul>
+          <li><a href="/welcome.html" >Home</a></li>
+          <li><a href="/blog_Register.html" class="active">Blog Register</a></li>
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="logout-btn">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+
+  <main class="container">
+  <section class="editor" style="margin:22px 0 38px;">
+    <h2 style="margin:0 0 8px; font-size:20px; font-weight:800; color:#0f172a;">
+      記事ステータス管理
+    </h2>
+    <p class="hint" style="margin:0 0 14px; font-size:12px; color:#64748b;">
+      下の表から、記事ごとにステータスを変更できます。
+    </p>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:36%;">タイトル</th>
+            <th style="width:18%;">カテゴリ</th>
+            <th style="width:18%;">作成日時</th>
+            <th style="width:18%;">ステータス</th>
+            <th style="width:10%;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr th:each="post : ${posts}">
+            <td>
+              <a th:href="@{'/blog/' + ${post.id}}" th:text="${post.title}"></a>
+            </td>
+            <td th:text="${post.categoryName}"></td>
+            <td th:text="${#temporals.format(post.createdAt,'yyyy/MM/dd HH:mm')}"></td>
+
+
+            <td>
+              <form th:action="@{/blog/status/update}" method="post" class="inline-form">
+                <input type="hidden" name="blogId" th:value="${post.id}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <select name="status" class="status-select" onchange="this.form.submit()">
+                  <option value="PUBLISHED" th:selected=>公開</option>
+                  <option value="PUBLISHED WITH NO COMMENt" th:selected=>公開(コメント不可)</option>
+                  <option value="UNPUBLISHED"  th:selected=>非公開</option>
+                </select>
+              </form>
+            </td>
+
+            <td class="actions-cell">
+                <button class="btn ghost sm" th:href="@{'/blog/edit/' + ${post.id}}">編集</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <div class="notice ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="notice ng" th:if="${err}" th:text="${err}"></div>
+  </section>
+</main>
+
+  <footer class="site-footer">
+    <small>Copyright &copy; SMH All rights reserved</small>
+  </footer>
+</body>
+</html>    

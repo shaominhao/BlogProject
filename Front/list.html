@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/reset.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <p class="brand">
+                <span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
+            </p>
+
+            <nav id="site-nav" class="nav">
+                <ul>
+                    <li><a href="/welcome.html">Home</a></li>
+                    <li><a href="/blog_Register.html">Blog Register</a></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="logout-btn">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+<section th:if="" class="post-list">
+  <article class="post-item" th:each="p : ${posts}">
+    <a class="thumb-wrap" th:href="@{'/blog/' + ${p.id}}">
+      <img class="thumb"
+           th:if="${p.coverUrl != null}"
+           th:src="${p.coverUrl}"
+           alt="cover" />
+      <div class="thumb-placeholder" th:if="${p.coverUrl == null}">No Image</div>
+    </a>
+
+    <div class="post-content">
+      <h3 class="post-title">
+        <a th:href="@{'/blog/' + ${p.id}}" th:text="${p.title}"></a>
+      </h3>
+      <p class="post-meta">
+        <span th:text="${#temporals.format(p.createdAt,'yyyy/MM/dd HH:mm')}"></span>
+        ・<span th:text="${p.categoryName}"></span>
+        ・by <span th:text="${p.authorName}"></span>
+      </p>
+      <p class="post-excerpt" th:text="${p.excerpt}"></p>
+      <a class="post-link" th:href="@{'/blog/' + ${p.id}}">続きを読む →</a>
+    </div>
+  </article>
+</section>
+
+    <footer class="site-footer">
+        <small>Copyright &copy; SMH All rights reserved</small>
+    </footer>
+</body>
+
+</html>

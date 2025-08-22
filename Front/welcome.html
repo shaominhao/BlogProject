@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/reset.css">
+</head>
+
+<body>
+    <header class="site-header">
+    <div class="container">
+      <p class="brand">
+        <span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
+      </p>
+
+      <nav id="site-nav" class="nav">
+        <ul>
+          <li><a href="/welcome.html" class="active">Home</a></li>
+          <li><a href="/blog_Register.html">Blog Register</a></li>
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="logout-btn">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>ようこそ、<span th:text="${userName}">User</span> さん！</h1>
+      <p>ここからブログを書いたり、編集したり、管理できます。</p>
+      <div class="actions">
+        <a class="btn primary" href="artical.html">新しい記事を書く</a>
+        <a class="btn ghost" href="list.html">記事一覧を見る</a>
+      </div>
+    </section>
+
+    <section class="cards">
+      <article class="card" th:each="post : ${recentPosts}">
+        <h3 class="card-title" th:text="${post.title}"></h3>
+        <p class="card-meta">
+          <span th:text="${#temporals.format(post.createdAt,'yyyy/MM/dd HH:mm')}"></span>
+          ・by <span th:text="${post.authorName}"></span>
+        </p>
+        <p class="card-excerpt" th:text="${post.excerpt}"></p>
+        <a class="card-link" th:href="@{'/blog/' + ${post.id}}">続きを読む →</a>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <small>Copyright &copy; SMH All rights reserved</small>
+  </footer>
+</body>
+</html>
