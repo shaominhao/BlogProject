@@ -14,15 +14,19 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long accountId;
 
+	// username
 	private String accountName;
 
+	// login email
 	private String accountEmail;
 
+	// login password
 	private String password;
 
-
+	// user登録時間
 	private Timestamp register_date;
 
+	// コンストラクタ
 	public Account() {
 
 	}
@@ -34,6 +38,7 @@ public class Account {
 		this.register_date = register_date;
 	}
 
+	// getter&setter
 	public Long getAccountId() {
 		return accountId;
 	}

@@ -1,5 +1,9 @@
 package myblogpractice.com.controllers;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
+import myblogpractice.com.models.dao.AccountDao;
 import myblogpractice.com.models.entity.Account;
+import myblogpractice.com.models.entity.Blog;
 import myblogpractice.com.services.AccountService;
 import myblogpractice.com.services.BlogService;
 
@@ -23,6 +29,9 @@ public class AccountLoginController {
 
 	@Autowired
 	private BlogService blogService;
+
+	@Autowired
+	public AccountDao accountDao;
 
 	// ログリン画面の表示
 	@GetMapping("/login")
@@ -44,9 +53,20 @@ public class AccountLoginController {
 			return "login.html";
 		} else {
 			session.setAttribute("loginAccountInfo", account);
-			model.addAttribute("userName", account.getAccountName());
-			model.addAttribute("recentPosts", blogService.findRecentPostsByUser(account.getAccountId()));
+			session.setAttribute("uid", account.getAccountId());
 
+			List<Blog> posts = blogService.accessWithUser(account.getAccountId());
+			Map<Long, String> accountNames = new HashMap<>();
+			for (Blog b : posts) {
+				Account author = accountDao.findByAccountId(b.getAccountId());
+				if (author != null) {
+					accountNames.put(b.getAccountId(), author.getAccountName());
+				}
+			}
+			model.addAttribute("post", posts);
+			model.addAttribute("accountNames", accountNames);
+			model.addAttribute("userName", account.getAccountName());
+			model.addAttribute("recentPosts", posts);
 			return "welcome.html";
 		}
 	}

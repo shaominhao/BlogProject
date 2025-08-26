@@ -19,7 +19,7 @@
 			<nav id="site-nav" class="nav">
 				<ul>
 					<li><a th:href="@{/blog/welcome}">Home</a></li>
-					<li><a th:href="@{/blog/register}" 　>Blog Register</a></li>
+					<li><a th:href="@{/blogregister}" 　>Blog Register</a></li>
 					<li>
 						<form th:action="@{/logout}" method="post">
 							<button type="submit" class="logout-btn">Logout</button>
@@ -32,22 +32,25 @@
 
 	<section  class="post-list">
 		<article class="post-item" th:each="p : ${posts}">
-			<a class="thumb-wrap" th:href="@{'/blog/' + ${p.id}}">
-				<img class="thumb" th:if="${p.coverUrl != null}" th:src="${p.coverUrl}" alt="cover" />
-				<div class="thumb-placeholder" th:if="${p.coverUrl == null}">No Image</div>
+			<a class="thumb-wrap" th:href="@{'/blog/' + ${p.blogId}}">
+				<img class="thumb"
+				         th:if="${p.blogImage != null}"
+				         th:src="@{/blog-img/{f}(f=${p.blogImage})}"
+				         alt="cover" />
+				<div class="thumb-placeholder" th:if="${p.blogImage == null}">No Image</div>
 			</a>
 
 			<div class="post-content">
 				<h3 class="post-title">
-					<a th:href="@{'/blog/' + ${p.id}}" th:text="${p.title}"></a>
+					<a th:href="@{'/blog/' + ${p.blogId}}" th:text="${p.blogTitle}"></a>
 				</h3>
 				<p class="post-meta">
-					<span th:text="${#temporals.format(p.createdAt,'yyyy/MM/dd HH:mm')}"></span>
+					<span th:text="${#dates.format(p.createdAt, 'yyyy/MM/dd HH:mm')}"></span>
 					・<span th:text="${p.categoryName}"></span>
-					・by <span th:text="${p.authorName}"></span>
+					・by <span th:text="${accountNames[p.accountId]}"></span>
 				</p>
-				<p class="post-excerpt" th:text="${p.excerpt}"></p>
-				<a class="post-link" th:href="@{'/blog/' + ${p.id}}">続きを読む →</a>
+				<p class="post-excerpt" th:text="${p.article}"></p>
+				<a class="post-link" th:href="@{'/blog/' + ${p.blogId}}">続きを読む →</a>
 			</div>
 		</article>
 	</section>

@@ -33,10 +33,8 @@ public class AccountRegisterController {
 
 		if (emailDup || nameDup) {
 			model.addAttribute("error", true);
-			if (emailDup)
-				model.addAttribute("msg1", true);
-			if (nameDup)
-				model.addAttribute("msg2", true);
+			model.addAttribute("msg1", emailDup);
+			model.addAttribute("msg2", nameDup);
 			return "register.html";
 		}
 

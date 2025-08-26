@@ -4,9 +4,12 @@ import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Blog {
@@ -15,24 +18,32 @@ public class Blog {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long blogId;
 
+	// blogのタイトル
 	private String blogTitle;
 
+	// blogの分類
 	private String categoryName;
 
+	// blog内の図
 	private String blogImage;
 
+	// blog本文内容
 	private String article;
 
+	// blogの作成者
 	@Column(name = "account_id")
 	private Long accountId;
 
+	// blogの作成時間
 	private Timestamp createdAt;
 
+	// blogの更新時間
 	private Timestamp updatedAt;
 
 	// 1=公開, 2=公開(コメント不可), 3=非公開
 	private int visibility;
 
+	// コンストラクタ
 	public Blog() {
 	}
 
@@ -48,6 +59,7 @@ public class Blog {
 		this.visibility = visibility;
 	}
 
+	// getter&setter
 	public Long getBlogId() {
 		return blogId;
 	}

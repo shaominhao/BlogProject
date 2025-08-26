@@ -62,7 +62,7 @@
 			<nav id="site-nav" class="nav">
 				<ul>
 					<li><a th:href="@{/blog/welcome}">Home</a></li>
-					<li><a th:href="@{/blog/register}" 　>Blog Register</a></li>
+					<li><a th:href="@{/blogregister}" 　>Blog Register</a></li>
 					<li>
 						<form th:action="@{/logout}" method="post">
 							<button type="submit" class="logout-btn">Logout</button>
@@ -77,7 +77,7 @@
 			<h2>新しい記事を投稿</h2>
 			<p class="hint" style="margin:0 0 14px;">タイトル・カテゴリ・カバー画像・本文を入力して、公開または下書き保存できます。</p>
 
-			<form class="blog-form" th:action="@{/blog/register}" method="post" enctype="multipart/form-data">
+			<form class="blog-form" th:action="@{/blog/artical}" method="post" enctype="multipart/form-data">
 				<div class="row">
 					<label for="blog_title">タイトル</label>
 					<input type="text" id="blog_title" name="blogTitle" maxlength="120" required
@@ -99,7 +99,7 @@
 					</datalist>
 					<div class="meta-inline">
 						<label style="display:inline-flex; align-items:center; gap:6px;">
-							<input type="checkbox" name="allowComments" checked> コメントを許可する
+							<input type="checkbox" name="rolerank" checked value="3"> コメントを許可する
 						</label>
 					</div>
 				</div>
@@ -129,8 +129,8 @@
 				</div>
 
 				<div class="actionsbtn">
-					<button class="btn primary" type="submit" name="action" value="publish">公開する</button>
-					<button class="btn ghost" type="submit" name="action" value="draft">下書き保存</button>
+					<button class="btn primary" type="submit" name="visibility" value="1">公開する</button>
+					<button class="btn ghost" type="submit" name="visibility" value="2">下書き保存</button>
 					<button class="btn warn" type="reset">リセット</button>
 				</div>
 			</form>

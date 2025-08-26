@@ -14,18 +14,25 @@ public class Comment {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long commentId;
 
+	// userid
 	private Long accountId;
 
+	// blogid
 	private Long blogId;
 
+	// コメント内の図
 	private String commentImage;
 
+	// コメントの本文
 	private String commentArticle;
 
+	// 前一つのコメント
 	private Long parentCommentId;
 
+	// コメント時間
 	private Timestamp created_at;
 
+	// コンストラクタ
 	public Comment() {
 
 	}
@@ -40,6 +47,7 @@ public class Comment {
 		this.created_at = created_at;
 	}
 
+	// getter&setter
 	public Long getCommentId() {
 		return commentId;
 	}

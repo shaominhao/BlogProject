@@ -21,7 +21,7 @@
 			<nav id="site-nav" class="nav">
 				<ul>
 					<li><a th:href="@{/blog/welcome}" class="active">Home</a></li>
-					<li><a th:href="@{/blog/register}">Blog Register</a></li>
+					<li><a th:href="@{/blogregister}">Blog Register</a></li>
 					<li>
 						<form th:action="@{/logout}" method="post">
 							<button type="submit" class="logout-btn">Logout</button>
@@ -38,19 +38,19 @@
 			<p>ここからブログを書いたり、編集したり、管理できます。</p>
 			<div class="actions">
 				<a class="btn primary" th:href="@{/artical}">新しい記事を書く</a>
-				<a class="btn ghost" th:href="@{/list}">記事一覧を見る</a>
+				<a class="btn ghost" th:href="@{/blog/list}">記事一覧を見る</a>
 			</div>
 		</section>
 
 		<section class="cards" th:if="${#lists.isEmpty(recentPosts)} == false">
 			<article class="card" th:each="post : ${recentPosts}">
-				<h3 class="card-title" th:text="${post.title}"></h3>
+				<h3 class="card-title" th:text="${post.blogTitle}"></h3>
 				<p class="card-meta">
-					<span th:text="${#temporals.format(post.createdAt,'yyyy/MM/dd HH:mm')}"></span>
-					・by <span th:text="${post.authorName}"></span>
+					<span th:text="${#dates.format(post.createdAt, 'yyyy/MM/dd HH:mm')}"></span>
+					・by <span th:text="${accountNames[post.accountId]}"></span>
 				</p>
-				<p class="card-excerpt" th:text="${post.excerpt}"></p>
-				<a class="card-link" th:href="@{'/blog/' + ${post.id}}">続きを読む →</a>
+				<p class="card-excerpt" th:text="${post.article}"></p>
+				<a class="card-link" th:href="@{'/blog/' + ${post.blogId}}">続きを読む →</a>
 			</article>
 		</section>
 

@@ -55,27 +55,29 @@
 
 						<tr th:each="blog : ${posts}">
 							<td>
-								<a th:href="@{'/blog/' + ${blog.id}}" th:text="${blog.title}"></a>
+								<a th:href="@{'/blog/' + ${blog.blogId}}" th:text="${blog.blogTitle}"></a>
 							</td>
 							<td th:text="${blog.categoryName}"></td>
-							<td th:text="${#temporals.format(post.createdAt,'yyyy/MM/dd HH:mm')}"></td>
+							<td th:text="${#dates.format(blog.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
 
 
 							<td>
 								<form th:action="@{/blog/status/update}" method="post" class="inline-form">
-									<input type="hidden" name="blogId" th:value="${blog.id}">
+									<input type="hidden" name="blogId" th:value="${blog.blogId}">
 
-									<select name="status" class="status-select" onchange="this.form.submit()">
-										<option value="1" th:selected="${post.visibility == 1}">公開</option>
-										<option value="2" th:selected="${post.visibility == 2}">公開(コメント不可)</option>
-										<option value="3" th:selected="${post.visibility == 3}">非公開</option>
-									</select>
+									<form th:object="${post}">
+									  <select class="status-select" th:field="*{visibility}" onchange="this.form.submit()">
+									    <option th:value="1">公開</option>
+									    <option th:value="2">公開(コメント不可)</option>
+									    <option th:value="3">非公開</option>
+									  </select>
+									</form>
 								</form>
 							</td>
 
 							<td class="actions-cell">
 								<button class="btn ghost sm"
-									th:onclick="'location.href=\'/blog/edit/' + ${post.id} + '\';'">
+									th:onclick="'location.href=\'/blog/edit/' + ${blogId} + '\';'">
 									編集
 								</button>
 							</td>
