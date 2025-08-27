@@ -63,11 +63,11 @@ public class AccountLoginController {
 					accountNames.put(b.getAccountId(), author.getAccountName());
 				}
 			}
-			model.addAttribute("post", posts);
+			model.addAttribute("posts", posts);
 			model.addAttribute("accountNames", accountNames);
 			model.addAttribute("userName", account.getAccountName());
 			model.addAttribute("recentPosts", posts);
-			return "welcome.html";
+			return "welcome";
 		}
 	}
 }

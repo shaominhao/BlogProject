@@ -44,48 +44,48 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th style="width:36%;">タイトル</th>
+							<th style="width:18%;">タイトル</th>
 							<th style="width:18%;">カテゴリ</th>
 							<th style="width:18%;">作成日時</th>
 							<th style="width:18%;">ステータス</th>
-							<th style="width:10%;">操作</th>
+							<th style="width:18%;">操作</th>
+							<th style="width:10%;">削除</th>
 						</tr>
 					</thead>
-					<tbody>
 
-						<tr th:each="blog : ${posts}">
-							<td>
-								<a th:href="@{'/blog/' + ${blog.blogId}}" th:text="${blog.blogTitle}"></a>
-							</td>
-							<td th:text="${blog.categoryName}"></td>
-							<td th:text="${#dates.format(blog.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
+					<tr th:each="blog : ${posts}">
+						<td>
+							<a th:href="@{'/blog/' + ${blog.blogId}}" th:text="${blog.blogTitle}"></a>
+						</td>
+						<td th:text="${blog.categoryName}"></td>
+						<td th:text="${#dates.format(blog.createdAt, 'yyyy/MM/dd HH:mm')}"></td>
+						<td>
+							<form th:action="@{/blog/status/update}" method="post" class="inline-form">
+								<input type="hidden" name="blogId" th:value="${blog.blogId}">
+								<select name="visibility">
+								  <option value="1" th:selected="${blog.visibility == 1}">公開</option>
+								  <option value="2" th:selected="${blog.visibility == 2}">公開(コメント不可)</option>
+								  <option value="3" th:selected="${blog.visibility == 3}">非公開</option>
+								</select>
+						<td>
+							<button type="submit" class="btn ghost sm">保存</button>
+							<a th:href="@{'/blog/edit/' + ${blog.blogId}}" class="btn ghost sm">編集</a>
+						</td>
+						</form>
+						<td>
+							<form th:action="@{/blog/delete}" method="post" class="inline-form"
+								onsubmit="return confirm('本当に削除しますか？');">
+								<input type="hidden" name="blogId" th:value="${blog.blogId}">
 
+								<button type="submit" class="btn ghost sm">削除</button>
 
-							<td>
-								<form th:action="@{/blog/status/update}" method="post" class="inline-form">
-									<input type="hidden" name="blogId" th:value="${blog.blogId}">
+							</form>
+						</td>
+						</td>
+					</tr>
 
-									<form th:object="${post}">
-									  <select class="status-select" th:field="*{visibility}" onchange="this.form.submit()">
-									    <option th:value="1">公開</option>
-									    <option th:value="2">公開(コメント不可)</option>
-									    <option th:value="3">非公開</option>
-									  </select>
-									</form>
-								</form>
-							</td>
-
-							<td class="actions-cell">
-								<button class="btn ghost sm"
-									th:onclick="'location.href=\'/blog/edit/' + ${blogId} + '\';'">
-									編集
-								</button>
-							</td>
-						</tr>
-					</tbody>
 				</table>
 			</div>
-
 
 			<div class="notice ok" th:if="${ok}" th:text="${ok}"></div>
 			<div class="notice ng" th:if="${err}" th:text="${err}"></div>

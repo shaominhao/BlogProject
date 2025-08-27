@@ -261,7 +261,7 @@ body {
 .actionsbtn .btn.ghost{   background: #eef2ff; color: #1e293b; }
 .actionsbtn .btn.warn{    background: #fee2e2; color: #991b1b; }
 
-/* list */
+
 
 .post-list{
   display: grid;
@@ -287,8 +287,8 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  max-width: 160px;   /* 最大宽度 */
-  max-height: 100px;  /* 最大高度 */
+  max-width: 160px;  
+  max-height: 100px;  
   border-radius: 12px;
   overflow: hidden;
   background: #f1f5f9;
@@ -301,24 +301,8 @@ body {
   max-height: 100px;
   width: auto;
   height: auto;
-  object-fit: contain;   /* 不裁剪；若想统一高度可改为 cover */
+  object-fit: contain;   
   display: block;
 }
-
-
-.thumb-placeholder{
-  width: 120px; height: 80px;           /* 占位尺寸可比 max 值略小 */
-  display: grid; place-items: center;
-  color: #94a3b8; font-size: 12px;
-}
-
-
-.post-content{ flex: 1 1 auto; min-width: 0; }
-.post-title{ margin: 0 0 4px; font-size: 18px; }
-.post-title a{ color: #0f172a; text-decoration: none; }
-.post-title a:hover{ text-decoration: underline; }
-.post-meta{ margin: 0 0 8px; color: #64748b; font-size: 13px; }
-.post-excerpt{ margin: 0 0 8px; color: #334155; }
-.post-link{ color: #0ea5e9; text-decoration: none; }
 
 

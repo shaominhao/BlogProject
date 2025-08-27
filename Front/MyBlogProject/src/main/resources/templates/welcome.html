@@ -50,7 +50,9 @@
 					・by <span th:text="${accountNames[post.accountId]}"></span>
 				</p>
 				<p class="card-excerpt" th:text="${post.article}"></p>
-				<a class="card-link" th:href="@{'/blog/' + ${post.blogId}}">続きを読む →</a>
+				<a class="card-link"
+				   th:href="@{/blog/detail/{id}(id=${post.blogId})}"
+				   th:if="${post != null and post.blogId != null}">続きを読む →</a>
 			</article>
 		</section>
 

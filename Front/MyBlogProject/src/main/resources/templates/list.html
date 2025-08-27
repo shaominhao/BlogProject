@@ -30,13 +30,11 @@
 		</div>
 	</header>
 
-	<section  class="post-list">
+	<section class="post-list">
 		<article class="post-item" th:each="p : ${posts}">
 			<a class="thumb-wrap" th:href="@{'/blog/' + ${p.blogId}}">
-				<img class="thumb"
-				         th:if="${p.blogImage != null}"
-				         th:src="@{/blog-img/{f}(f=${p.blogImage})}"
-				         alt="cover" />
+				<img class="thumb" th:if="${p.blogImage != null}"
+					th:src="@{/blog-img/{imagePath}(imagePath=${p.blogImage})}" alt="" />
 				<div class="thumb-placeholder" th:if="${p.blogImage == null}">No Image</div>
 			</a>
 
@@ -50,7 +48,7 @@
 					・by <span th:text="${accountNames[p.accountId]}"></span>
 				</p>
 				<p class="post-excerpt" th:text="${p.article}"></p>
-				<a class="post-link" th:href="@{'/blog/' + ${p.blogId}}">続きを読む →</a>
+				<a class="post-link" th:href="@{/blog/detail/{id}(id=${p.blogId})}">続きを読む →</a>
 			</div>
 		</article>
 	</section>

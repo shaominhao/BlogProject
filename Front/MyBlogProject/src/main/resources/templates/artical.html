@@ -1,146 +1,179 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
-	<link rel="stylesheet" th:href="@{/css/reset.css}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/reset.css}">
 </head>
 
-<script>
-	document.addEventListener('DOMContentLoaded', function () {
-		var input = document.getElementById('blog_image')
-			|| document.querySelector('input[type="file"][name="blogImage"]');
-		var preview = document.getElementById('coverPreview');
-		var img = document.getElementById('coverImg');
-		if (!input || !preview || !img) return;
-
-		var blobURL = null;
-
-		function resetPreview() {
-			if (blobURL) {URL.revokeObjectURL(blobURL); blobURL = null;}
-			img.removeAttribute('src');
-			img.style.display = 'none';
-			if (!preview.querySelector('span')) {
-				var s = document.createElement('span');
-				s.textContent = '画像プレビュー';
-				preview.appendChild(s);
-			}
-			preview.classList.remove('has-image');
-		}
-
-		function showFile(file) {
-			if (!file || !(file.type || '').startsWith('image/')) {resetPreview(); return;}
-			if (blobURL) {URL.revokeObjectURL(blobURL);}
-			blobURL = URL.createObjectURL(file);
-			img.src = blobURL;
-			img.onload = function () {URL.revokeObjectURL(blobURL); blobURL = null;};
-			img.style.display = 'block';
-			var ph = preview.querySelector('span'); if (ph) ph.remove();
-			preview.classList.add('has-image');
-		}
-
-		input.addEventListener('change', function () {
-			var f = this.files && this.files[0];
-			showFile(f);
-		});
-
-		resetPreview();
-	});
-</script>
-
 <body>
-	<header class="site-header">
-		<div class="container">
-			<p class="brand">
-				<span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
-			</p>
+  <header class="site-header">
+    <div class="container">
+      <p class="brand">
+        <span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
+      </p>
+
+      <nav id="site-nav" class="nav">
+        <ul>
+          <li><a th:href="@{/blog/welcome}">Home</a></li>
+
+          <li><a th:href="@{/blogregister}">Blog Register</a></li>
+          <li>
+            <form th:action="@{/logout}" method="post">
+              <button type="submit" class="logout-btn">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="editor">
+		<h2 th:text="${blog != null and blog.blogId != null} ? '記事を編集' : '新しい記事を投稿'">
+		    新しい記事を投稿
+		</h2>
+      <p class="hint" style="margin:0 0 14px;">タイトル・カテゴリ・カバー画像・本文を入力して、公開または下書き保存できます。</p>
 
 
-			<nav id="site-nav" class="nav">
-				<ul>
-					<li><a th:href="@{/blog/welcome}">Home</a></li>
-					<li><a th:href="@{/blogregister}" 　>Blog Register</a></li>
-					<li>
-						<form th:action="@{/logout}" method="post">
-							<button type="submit" class="logout-btn">Logout</button>
-						</form>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</header>
-	<main class="container">
-		<section class="editor">
-			<h2>新しい記事を投稿</h2>
-			<p class="hint" style="margin:0 0 14px;">タイトル・カテゴリ・カバー画像・本文を入力して、公開または下書き保存できます。</p>
-
-			<form class="blog-form" th:action="@{/blog/artical}" method="post" enctype="multipart/form-data">
-				<div class="row">
-					<label for="blog_title">タイトル</label>
-					<input type="text" id="blog_title" name="blogTitle" maxlength="120" required
-						placeholder="例）個人開発のまとめ">
-					<div class="meta-inline">
-						<span class="hint">120文字まで</span>
-					</div>
-
-				</div>
-
-				<div class="row">
-					<label for="category_name">カテゴリ</label>
-					<input type="text" id="category_name" name="categoryName" list="categoryList"
-						placeholder="例）IT技術 / 料理 / 旅行">
-					<datalist id="categoryList">
-						<option value="IT技術"></option>
-						<option value="料理"></option>
-						<option value="旅行"></option>
-					</datalist>
-					<div class="meta-inline">
-						<label style="display:inline-flex; align-items:center; gap:6px;">
-							<input type="checkbox" name="rolerank" checked value="3"> コメントを許可する
-						</label>
-					</div>
-				</div>
+      <form class="blog-form" th:action="@{/blog/artical}" method="post" enctype="multipart/form-data">
 
 
-				<div class="split">
+        <input type="hidden" name="blogId" th:if="${blog != null}" th:value="${blog.blogId}">
+        <input type="hidden" name="oldImage" th:if="${blog != null}" th:value="${blog.blogImage}">
 
-					<div class="row">
-						<label for="article">本文</label>
-						<textarea id="article" name="article" placeholder="本文を入力してください…" required></textarea>
-						<div class="meta-inline">
-							<span class="hint">改行可・プレーンテキスト（必要なら後でMarkdown対応へ拡張）</span>
-							<span class="counter" id="bodyCounter">0 文字</span>
-						</div>
-					</div>
+        <div class="row">
+          <label for="blog_title">タイトル</label>
+          <input type="text"
+                 id="blog_title"
+                 name="blogTitle"
+                 maxlength="120"
+                 required
+                 placeholder="例）個人開発のまとめ"
+                 th:value="${(blog != null) ? blog.blogTitle : ''}">
+          <div class="meta-inline">
+            <span class="hint">120文字まで</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="category_name">カテゴリ</label>
+          <input type="text"
+                 id="category_name"
+                 name="categoryName"
+                 list="categoryList"
+                 placeholder="例）IT技術 / 料理 / 旅行"
+                th:value="${(blog != null) ? blog.categoryName : ''}" />
+        <datalist id="categoryList">
+            <option value="IT技術"></option>
+            <option value="料理"></option>
+            <option value="旅行"></option>
+          </datalist>
+
+          <div class="meta-inline">
+            <label style="display:inline-flex; align-items:center; gap:6px;">
+              <input type="checkbox"
+                     name="rolerank"
+                     th:checked="${blog == null} ? true : (blog.rolerank != null and blog.rolerank == 3)"
+                     value="3"> コメントを許可する
+            </label>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="row">
+            <label for="article">本文</label>
+            <textarea id="article"
+                      name="article"
+                      placeholder="本文を入力してください…"
+					  th:text="${(blog != null) ? blog.Article: ''}"></textarea>
+            <div class="meta-inline">
+              <span class="hint">改行可・プレーンテキスト（必要なら後でMarkdown対応へ拡張）</span>
+              <span class="counter" id="bodyCounter">0 文字</span>
+            </div>
+          </div>
+
+          <div class="cover">
+            <label for="blogImage">カバー画像</label>
+            <input type="file" id="blogImage" name="blogImage" accept="image/*">
+            <div class="cover-preview" id="coverPreview"
+                 th:classappend="${blog != null and blog.blogImage != null} ? ' has-image' : ''">
+
+              <img id="coverImg"
+                   alt="cover preview"
+                   th:if="${blog != null and blog.blogImage != null}"
+                   th:src="@{/blog-img/{file}(file=${blog.blogImage})}"
+                   style="display:block;">
+
+              <span th:if="${blog == null or blog.blogImage == null}">画像プレビュー</span>
+            </div>
+            <p class="hint">推奨 1280×720 以上、JPG/PNG。</p>
+          </div>
+        </div>
+
+        <div class="actionsbtn">
+          <button class="btn primary" type="submit" name="visibility" value="1">公開する</button>
+          <button class="btn ghost" type="submit" name="visibility" value="2">下書き保存</button>
+          <button class="btn warn" type="reset">リセット</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <small>Copyright &copy; SMH All rights reserved</small>
+  </footer>
 
 
-					<div class="cover">
-						<label for="blog_image">カバー画像</label>
-						<input type="file" id="blog_image" name="blogImage" accept="image/*">
-						<div class="cover-preview" id="coverPreview">
-							<span>画像プレビュー</span>
-							<img id="coverImg" alt="cover preview">
-						</div>
-						<p class="hint">推奨 1280×720 以上、JPG/PNG。</p>
-					</div>
-				</div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var input = document.getElementById('blogImage')
+        || document.querySelector('input[type="file"][name="blogImage"]');
+      var preview = document.getElementById('coverPreview');
+      var img = document.getElementById('coverImg');
+      if (!input || !preview) return; 
 
-				<div class="actionsbtn">
-					<button class="btn primary" type="submit" name="visibility" value="1">公開する</button>
-					<button class="btn ghost" type="submit" name="visibility" value="2">下書き保存</button>
-					<button class="btn warn" type="reset">リセット</button>
-				</div>
-			</form>
-		</section>
+      var blobURL = null;
 
-	</main>
+      function resetPreview() {
+        if (blobURL) { URL.revokeObjectURL(blobURL); blobURL = null; }
+        if (img) {
+          img.removeAttribute('src');
+          img.style.display = 'none';
+        }
+        if (!preview.querySelector('span')) {
+          var s = document.createElement('span');
+          s.textContent = '画像プレビュー';
+          preview.appendChild(s);
+        }
+        preview.classList.remove('has-image');
+      }
 
-	<footer class="site-footer">
-		<small>Copyright &copy; SMH All rights reserved</small>
-	</footer>
+      function showFile(file) {
+        if (!file || !(file.type || '').startsWith('image/')) { resetPreview(); return; }
+        if (!img) {
+          img = document.createElement('img');
+          img.id = 'coverImg';
+          img.alt = 'cover preview';
+          preview.appendChild(img);
+        }
+        if (blobURL) { URL.revokeObjectURL(blobURL); }
+        blobURL = URL.createObjectURL(file);
+        img.src = blobURL;
+        img.onload = function () { URL.revokeObjectURL(blobURL); blobURL = null; };
+        img.style.display = 'block';
+        var ph = preview.querySelector('span'); if (ph) ph.remove();
+        preview.classList.add('has-image');
+      }
+
+      input.addEventListener('change', function () {
+        var f = this.files && this.files[0];
+        showFile(f);
+      });
+    });
+  </script>
 </body>
-
 </html>

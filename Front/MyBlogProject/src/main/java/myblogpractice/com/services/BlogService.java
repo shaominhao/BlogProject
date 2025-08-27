@@ -87,15 +87,15 @@ public class BlogService {
 	}
 
 	// 削除処理
-	public void deleteAtrical(Long blogId, Long uid) {
-		long n = blogDao.deleteByBlogIdAndAccountId(blogId, uid);
+	public void deleteAtrical(Long blogId) {
+		long n = blogDao.deleteByBlogId(blogId);
 		if (n == 0)
 			throw new SecurityException("not allowed to delete this blog");
 	}
 
 	// Userから訪問可能なblogを選ぶ
 	public List<Blog> accessWithUser(Long uid) {
-		var mine = blogDao.findByAccountIdAndVisibilityNot(uid, 2);
+		var mine = blogDao.findByAccountIdAndVisibilityNot(uid, 3);
 		var others = blogDao.findByAccountIdNotAndVisibility(uid, 1);
 		return java.util.stream.Stream.concat(mine.stream(), others.stream())
 				.sorted(java.util.Comparator.comparing(Blog::getCreatedAt).reversed()).toList();
@@ -105,10 +105,14 @@ public class BlogService {
 	public List<Blog> accessWithAdmin(Long uid) {
 		return blogDao.findByAccountIdOrderByCreatedAtDesc(uid);
 	}
-	
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        Path root = Paths.get(uploadDir).toAbsolutePath().normalize();
-        registry.addResourceHandler("/blog-img/**")
-                .addResourceLocations("file:" + root.toString() + "/");
-    }
+
+	public Blog findByblogId(Long blogid) {
+		return blogDao.findByBlogId(blogid);
+	}
+	public Blog updateStatus(Long blogId, int visibility, Long uid) {
+		
+		Blog blog = blogDao.findByBlogId(blogId);
+		blog.setVisibility(visibility);
+		return blog;
+	}
 }

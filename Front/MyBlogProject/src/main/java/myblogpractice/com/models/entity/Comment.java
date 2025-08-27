@@ -39,6 +39,7 @@ public class Comment {
 
 	public Comment(Long accountId, Long blogId, String commentImage, String commentArticle, Long parentCommentId,
 			Timestamp created_at) {
+		super();
 		this.accountId = accountId;
 		this.blogId = blogId;
 		this.commentImage = commentImage;

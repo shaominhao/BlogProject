@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${blog.blogTitle}">Blog Detail</title>
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href=">
+</head>
+<body class="bd-body">
+
+<header class="bd-header">
+  <div class="bd-container bd-header__inner">
+    <a class="bd-brand" th:href="@{/blog/welcome}">
+      <span class="bd-logo">B</span>
+      <span class="bd-brand__text">Blog</span>
+    </a>
+    <nav class="bd-nav">
+      <a th:href="@{/blog/welcome}">Home</a>
+      <a th:href="@{/blog/register}">Blog Register</a>
+      <form th:action="@{/logout}" method="post" class="bd-inline-form">
+        <button type="submit" class="bd-btn bd-btn--ghost">Logout</button>
+      </form>
+    </nav>
+  </div>
+</header>
+
+<main class="bd-container bd-main">
+  <!-- 文章卡片 -->
+  <section class="bd-card">
+    <h1 class="bd-title" th:text="${blog.blogTitle}">タイトル</h1>
+    <p class="bd-meta">
+      <span th:text="${blog.createdAt == null ? '-' : #dates.format(blog.createdAt,'yyyy/MM/dd HH:mm')}">2025/01/01</span>
+      ・<span th:text="${blog.categoryName}">カテゴリ</span>
+      ・by
+      <span th:text="
+          ${blog.author != null} ? blog.author.accountName
+          : (blogAuthorName != null ? blogAuthorName
+            : (accountNames != null and blog.accountId != null and #maps.containsKey(accountNames, blog.accountId)
+               ? accountNames[blog.accountId] : '匿名'))">author</span>
+    </p>
+
+    <img class="bd-cover" th:if="${blog.blogImage != null}"
+         th:src="@{/blog-img/{f}(f=${blog.blogImage})}" alt="cover">
+
+    <article class="bd-article" th:text="${blog.article}">
+      本文…
+    </article>
+  </section>
+
+  <!-- 评论列表 -->
+  <section class="bd-card">
+    <h2 class="bd-subtitle">
+      コメント
+      <small class="bd-meta"
+             th:text="'(' + (${comments} == null ? 0 : ${#lists.size(comments)}) + ')'">(0)</small>
+    </h2>
+
+    <div th:if="${comments != null}" th:each="c : ${comments}" class="bd-comment" th:id="${'c-'+c.commentId}">
+      <div class="bd-comment__head">
+        <div class="bd-comment__who">
+          <span class="bd-comment__author"
+                th:text="${commentNames != null and c.accountId != null and #maps.containsKey(commentNames, c.accountId)
+                         ? commentNames[c.accountId] : '匿名'}">匿名</span>
+          <span class="bd-comment__time"
+                th:text="${c.createdAt == null ? '' : #dates.format(c.createdAt,'yyyy/MM/dd HH:mm')}">time</span>
+        </div>
+
+        <div class="bd-comment__actions">
+          <form th:if="${session.uid != null and (session.uid == blog.accountId or session.uid == c.accountId)}"
+                th:action="@{/comment/{id}/delete(id=${c.commentId})}" method="post" class="bd-inline-form"
+                onsubmit="return confirm('コメントを削除しますか？');">
+            <input type="hidden" name="blogId" th:value="${blog.blogId}">
+            <button type="submit" class="bd-btn bd-btn--warn bd-btn--sm">削除</button>
+          </form>
+          <button type="button" class="bd-btn bd-btn--ghost bd-btn--sm"
+                  th:attr="data-bd-toggle=${'reply-'+c.commentId}">返信</button>
+        </div>
+      </div>
+
+      <div class="bd-comment__text" th:text="${c.commentArticle}">コメント本文</div>
+
+      <img class="bd-comment__image" th:if="${c.commentImage != null}"
+           th:src="@{/comment-img/{f}(f=${c.commentImage})}" alt="comment image">
+
+      <!-- 回复表单（默认隐藏） -->
+      <form class="bd-reply" th:id="${'reply-'+c.commentId}"
+            th:action="@{/comment/reply}" method="post" enctype="multipart/form-data">
+        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <input type="hidden" name="blogId" th:value="${blog.blogId}">
+        <input type="hidden" name="parentCommentId" th:value="${c.commentId}">
+        <textarea class="bd-textarea" name="commentArticle" placeholder="返信を入力…"></textarea>
+        <div class="bd-actions">
+          <input type="file" name="commentImage" accept="image/*">
+          <button type="submit" class="bd-btn bd-btn--primary bd-btn--sm">返信を投稿</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 发表评论 -->
+  <section class="bd-card">
+    <h2 class="bd-subtitle">コメントを書く</h2>
+
+    <div th:if="${session.uid == null}" class="bd-hint">
+      コメントするには <a th:href="@{/login}">ログイン</a> してください。
+    </div>
+
+    <form th:if="${session.uid != null}"
+          th:action="@{/comment/add}" method="post" enctype="multipart/form-data">
+      <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <input type="hidden" name="blogId" th:value="${blog.blogId}">
+      <textarea class="bd-textarea" name="commentArticle" placeholder="コメントを入力…" required></textarea>
+      <div class="bd-actions">
+        <input type="file" name="commentImage" accept="image/*">
+        <button type="submit" class="bd-btn bd-btn--primary">投稿</button>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer class="bd-footer">
+  <div class="bd-container">
+    <small>Copyright &copy; SMH All rights reserved</small>
+  </div>
+</footer>
+
+<script>
+  // 仅用于展开/收起回复框（不依赖任何库）
+  document.addEventListener('click', e => {
+    if (e.target.matches('[data-bd-toggle]')) {
+      const id = e.target.getAttribute('data-bd-toggle');
+      const box = document.getElementById(id);
+      if (box) box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+    }
+  });
+</script>
+</body>
+</html>
