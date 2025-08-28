@@ -12,9 +12,11 @@
 <body>
   <header class="site-header">
     <div class="container">
-      <p class="brand">
-        <span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
-      </p>
+		<p class="brand">
+		  <a th:href="@{/about}" style="text-decoration:none; color:inherit;">
+		    <span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
+		  </a>
+		</p>
 
       <nav id="site-nav" class="nav">
         <ul>

@@ -53,40 +53,57 @@ public class CommentAccessController {
 		if (login == null || uid == null) {
 			return "redirect:/login";
 		}
-		// 画面のヘッダー等で使う現在ログイン中のユーザー名
 		model.addAttribute("userName", login.getAccountName());
-
-		// blogId の存在確認 & 取得
-		Blog blog = blogService.findByblogId(blogId);
-		// ない場合は Optional で書いてもOK
+		model.addAttribute("uid", uid);
+		
+		//
+		Blog blog = blogDao.findByBlogId(blogId);
 		if (blog == null) {
-			// 見つからない
 			model.addAttribute("err", "対象のブログが見つかりません。");
 			return "redirect:/blog/list";
 		}
 		model.addAttribute("blog", blog);
 
-		// このページの「userName（著者名）」を blogId から取得して表示用にセット
-		// ※ ヘッダーのログイン者名とは分けるため、authorName で渡すのを推奨
+		//
 		Account author = accountDao.findByAccountId(blog.getAccountId());
-		String authorName = (author != null) ? author.getAccountName() : "Unknown";
-		model.addAttribute("authorName", authorName);
+		model.addAttribute("authorName", (author != null) ? author.getAccountName() : "Unknown");
 
-		// 削除権限判定：uid によって「他人のコメントを削除できるか」を決める
-		// ここでは「記事の作者」であれば他者コメントの削除が可能、というルールにする
-
-		boolean isOwner = uid.equals(blog.getAccountId());
-		boolean isAdminLike = false;
-		boolean canDeleteOthersComment = isOwner || isAdminLike;
+		//
+		boolean canDeleteOthersComment = uid.equals(blog.getAccountId());
 		model.addAttribute("canDeleteOthersComment", canDeleteOthersComment);
+
+		//
+		var sortAsc = org.springframework.data.domain.Sort.by("createdAt").ascending();
+
+		// （parent_comment_id null）
+		List<Comment> roots = commentDao.findByBlogIdAndParentCommentIdIsNull(blogId, sortAsc);
+		model.addAttribute("comments", roots);
+
+		// parentId
+		List<Comment> all = commentDao.findByBlogId(blogId, sortAsc);
+		Map<Long, List<Comment>> repliesMap = all.stream().filter(c -> c.getParentCommentId() != null)
+				.collect(java.util.stream.Collectors.groupingBy(Comment::getParentCommentId));
+		model.addAttribute("repliesMap", repliesMap);
+
+		// Map<accountId, accountName>
+		Map<Long, String> commentNames = new java.util.HashMap<>();
+		for (Comment c : all) {
+			Long accId = c.getAccountId();
+			if (accId != null && !commentNames.containsKey(accId)) {
+				Account a = accountDao.findByAccountId(accId);
+				if (a != null)
+					commentNames.put(accId, a.getAccountName());
+			}
+		}
+		model.addAttribute("commentNames", commentNames);
 
 		return "blog_detail";
 	}
 
 	@PostMapping("/blog/{blogId}/comments")
-	public String submitComment(@PathVariable Long blogId, @RequestParam String commentArticle, // コメント本文
-			@RequestParam(name = "commentImage", required = false) MultipartFile commentImage, // 画像(任意)
-			@RequestParam(name = "parentCommentId", required = false) Long parentCommentId, // 返信対象(任意)
+	public String submitComment(@PathVariable Long blogId, @RequestParam String commentArticle, 
+			@RequestParam(name = "commentImage", required = false) MultipartFile commentImage, 
+			@RequestParam(name = "parentCommentId", required = false) Long parentCommentId, 
 			RedirectAttributes ra, HttpSession session, Model model) {
 
 		// 1) ログイン確認
@@ -97,7 +114,7 @@ public class CommentAccessController {
 		}
 
 		// 2) ブログ存在確認
-		Blog blog = blogDao.findByBlogId(blogId); // ※ findByBlogId に統一
+		Blog blog = blogDao.findByBlogId(blogId);
 		if (blog == null) {
 			ra.addFlashAttribute("err", "対象のブログが見つかりません。");
 			return "redirect:/blog/list";
@@ -151,10 +168,10 @@ public class CommentAccessController {
 
 		// 根コメント（親なし）
 		var sortAsc = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC,
-				"created_at");
+				"createdAt");
 		List<Comment> roots = commentDao.findByBlogIdAndParentCommentIdIsNull(blogId, sortAsc);
 
-		// 全部コメント，用于组装「親ID ⇒ 返信一覧」的map
+		
 		List<Comment> all = commentDao.findByBlogId(blogId, sortAsc);
 		Map<Long, List<Comment>> repliesMap = all.stream().filter(c -> c.getParentCommentId() != null)
 				.collect(java.util.stream.Collectors.groupingBy(Comment::getParentCommentId));

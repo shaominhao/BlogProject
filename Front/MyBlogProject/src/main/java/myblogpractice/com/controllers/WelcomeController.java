@@ -55,5 +55,20 @@ public class WelcomeController {
 			return "list";
 		}
 	}
-
+		
+	//自己紹介pageへ
+	 @GetMapping("/about")
+	    public String about(Model model) {
+	        // ヘッダーの表示名
+	        Account login = (Account) session.getAttribute("loginAccountInfo");
+	        if (login != null) {
+	            model.addAttribute("userName", login.getAccountName());
+	            model.addAttribute("profileName", login.getAccountName());
+	        } else {
+	            model.addAttribute("profileName", "ゲスト");
+	        }
+	        // 自己紹介文（あとでDBに載せ替えてOK）
+	        model.addAttribute("bio", "ここに自己紹介文を追加します。趣味、スキル、連絡先など。");
+	        return "about"; 
+	    }
 }

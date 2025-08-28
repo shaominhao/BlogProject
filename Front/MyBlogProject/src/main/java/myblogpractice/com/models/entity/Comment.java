@@ -30,7 +30,7 @@ public class Comment {
 	private Long parentCommentId;
 
 	// コメント時間
-	private Timestamp created_at;
+	private Timestamp createdAt;
 
 	// コンストラクタ
 	public Comment() {
@@ -38,14 +38,14 @@ public class Comment {
 	}
 
 	public Comment(Long accountId, Long blogId, String commentImage, String commentArticle, Long parentCommentId,
-			Timestamp created_at) {
+			Timestamp createdAt) {
 		super();
 		this.accountId = accountId;
 		this.blogId = blogId;
 		this.commentImage = commentImage;
 		this.commentArticle = commentArticle;
 		this.parentCommentId = parentCommentId;
-		this.created_at = created_at;
+		this.createdAt = createdAt;
 	}
 
 	// getter&setter
@@ -97,12 +97,12 @@ public class Comment {
 		this.parentCommentId = parentCommentId;
 	}
 
-	public Timestamp getCreated_at() {
-		return created_at;
+	public Timestamp getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreated_at(Timestamp created_at) {
-		this.created_at = created_at;
+	public void setCreated_at(Timestamp createdAt) {
+		this.createdAt = createdAt;
 	}
 
 }

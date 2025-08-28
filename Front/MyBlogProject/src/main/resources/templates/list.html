@@ -13,7 +13,9 @@
 	<header class="site-header">
 		<div class="container">
 			<p class="brand">
-				<span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
+			  <a th:href="@{/about}" style="text-decoration:none; color:inherit;">
+			    <span class="logo"><span th:text="${userName}"></span>'s</span><span class="brand-text">Blog</span>
+			  </a>
 			</p>
 
 			<nav id="site-nav" class="nav">
@@ -30,6 +32,15 @@
 		</div>
 	</header>
 
+	<div class="container" style="margin:16px 0;">
+	  <form th:action="@{/blog/list}" method="get" class="search-form" style="display:flex; gap:8px;">
+	    <input type="text" name="q" th:value="${q}"
+	           placeholder="タイトル / カテゴリ / 本文 を検索"
+	           style="flex:1; padding:8px 10px;">
+	    <button type="submit" class="btn ghost sm">検索</button>
+	  </form>
+	</div>
+	
 	<section class="post-list">
 		<article class="post-item" th:each="p : ${posts}">
 			<a class="thumb-wrap" th:href="@{'/blog/' + ${p.blogId}}">

@@ -109,10 +109,17 @@ public class BlogService {
 	public Blog findByblogId(Long blogid) {
 		return blogDao.findByBlogId(blogid);
 	}
+
 	public Blog updateStatus(Long blogId, int visibility, Long uid) {
-		
+
 		Blog blog = blogDao.findByBlogId(blogId);
 		blog.setVisibility(visibility);
 		return blog;
 	}
+
+	public List<Blog> searchMyPosts(Long uid, String keyword) {
+		return blogDao.searchMyPosts(uid, keyword);
+	}
+
+
 }

@@ -34,8 +34,11 @@ public class CommentService {
 		return commentDao.save(c);
 	}
 
-	
-	
+	//コメントの削除
+	 public void deleteOne(Long commentId) {
+	        commentDao.deleteById(commentId);
+	    }
+
 //	public void deleteComment(Long commentId) {
 //		long n = commentDao.deleteBycommentId(commentId);
 //		if (n == 0)

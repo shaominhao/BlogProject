@@ -37,5 +37,13 @@ public interface BlogDao extends JpaRepository<Blog, Long> {
 	List<Blog> findByAccountIdAndVisibilityIsNull(Long accountId);
 	// 指定アカウントIDで、作成日時の降順にブログ一覧を取得する
 	List<Blog> findByAccountIdOrderByCreatedAtDesc(Long accountId);
+	
+	@Query("SELECT b FROM Blog b " +
+	           "WHERE b.accountId = :uid AND (" +
+	           "      LOWER(b.blogTitle)    LIKE LOWER(CONCAT('%', :kw, '%')) OR " +
+	           "      LOWER(b.categoryName) LIKE LOWER(CONCAT('%', :kw, '%')) OR " +
+	           "      LOWER(b.article)      LIKE LOWER(CONCAT('%', :kw, '%'))" +
+	           ") ORDER BY b.createdAt DESC")
+	List<Blog> searchMyPosts(@Param("uid") Long uid, @Param("kw") String keyward);
 
 }
