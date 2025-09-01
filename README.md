@@ -27,7 +27,6 @@ Blog は Spring Boot で開発した個人向けブログアプリです。
 - フロントエンド：HTML / CSS / JavaScript / Thymeleaf
 - データベース：PostgreSQL
 - ビルド・管理：Maven / GitHub
-- IDE：IntelliJ IDEA
 
 ---
 
