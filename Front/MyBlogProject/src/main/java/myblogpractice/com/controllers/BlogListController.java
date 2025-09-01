@@ -44,29 +44,39 @@ public class BlogListController {
 	@Autowired
 	private BlogDao blogDao;
 
+	 // ブログ一覧画面にアクセス
 	@GetMapping("/blog/list")
 	public String bloglist(@RequestParam(value = "q", required = false) String q,Model model) {
+		// セッションからログイン情報を取得
 		Account login = (Account) session.getAttribute("loginAccountInfo");
 		Long uid = (Long) session.getAttribute("uid");
 
 		if (login == null || uid == null) {
+			 // 未ログインの場合はログイン画面へリダイレクト
 			return "redirect:/login";
 		}
 
+		// ユーザー名を画面に渡す
 		model.addAttribute("userName", login.getAccountName());
 
 		 List<Blog> posts;
 		    if (q != null && !q.trim().isEmpty()) {
+		    	 // 検索キーワードがある場合、自分の投稿を検索
 		        String kw = q.trim();
 		        posts = blogService.searchMyPosts(uid, kw);   
+		        
+	            // 検索結果が1件のみの場合、詳細画面に直接リダイレクト
 		        if (posts.size() == 1) {
 		            return "redirect:/blog/detail/" + posts.get(0).getBlogId();
 		        }
+		     // 検索キーワードをモデルに渡す
 		        model.addAttribute("q", kw);
 		    } else {
+		    	// 検索キーワードがない場合、管理者としてアクセス可能な投稿を取得
 		        posts = blogService.accessWithAdmin(uid);
 		    }
-
+		
+		 // 投稿ごとに著者名を取得してMapに格納
 		Map<Long, String> authorNames = new HashMap<>();
 		for (Blog b : posts) {
 			Account author = accountDao.findByAccountId(b.getAccountId());
@@ -74,8 +84,11 @@ public class BlogListController {
 				authorNames.put(b.getAccountId(), author.getAccountName());
 			}
 		}
+		// 投稿リストと著者名を画面に渡す
 		model.addAttribute("posts", posts);
 		model.addAttribute("accountNames", authorNames);
+		
+		// 一覧画面を表示
 		return "list.html";
 	}
 

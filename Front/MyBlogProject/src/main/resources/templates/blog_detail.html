@@ -53,11 +53,11 @@
 		</section>
 
 		<!-- コメントlist -->
-		< <section class="bd-card">
+		 <section class="bd-card">
 			<h2 class="bd-subtitle">
 				コメント
 				<small class="bd-meta"
-					th:text="${'(' + (#lists.isEmpty(comments) ? 0 : #lists.size(comments)) + ')'}">(0)</small>
+					th:text="${'(' + (#lists.isEmpty(comments) ? 0 : #lists.size(comments)) + ')'}"></small>
 			</h2>
 
 			<!-- 根コメント -->

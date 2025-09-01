@@ -95,10 +95,25 @@ public class BlogService {
 
 	// Userから訪問可能なblogを選ぶ
 	public List<Blog> accessWithUser(Long uid) {
-		var mine = blogDao.findByAccountIdAndVisibilityNot(uid, 3);
-		var others = blogDao.findByAccountIdNotAndVisibility(uid, 1);
-		return java.util.stream.Stream.concat(mine.stream(), others.stream())
-				.sorted(java.util.Comparator.comparing(Blog::getCreatedAt).reversed()).toList();
+	    //（ 1/2/3）
+	    List<Blog> mine = blogDao.findByAccountIdOrderByCreatedAtDesc(uid);
+
+	    // 公開(コメント不可)
+	    List<Blog> othersPub  = blogDao.findByAccountIdNotAndVisibility(uid, 1);
+	    List<Blog> othersNoCmt = blogDao.findByAccountIdNotAndVisibility(uid, 3);
+
+	    List<Blog> all = new java.util.ArrayList<>();
+	    if (mine != null) all.addAll(mine);
+	    if (othersPub != null) all.addAll(othersPub);
+	    if (othersNoCmt != null) all.addAll(othersNoCmt);
+
+
+	    all.sort(java.util.Comparator.comparing(
+	        Blog::getCreatedAt,
+	        java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())
+	    ).reversed());
+
+	    return all.size() > 50 ? all.subList(0, 50) : all;
 	}
 
 	// Adminから訪問可能なblogを選ぶ

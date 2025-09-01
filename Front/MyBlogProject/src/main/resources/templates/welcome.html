@@ -44,22 +44,19 @@
 			</div>
 		</section>
 
-		<section class="cards" th:if="${#lists.isEmpty(recentPosts)} == false">
-			<article class="card" th:each="post : ${recentPosts}">
-				<h3 class="card-title" th:text="${post.blogTitle}"></h3>
-				<p class="card-meta">
-					<span th:text="${#dates.format(post.createdAt, 'yyyy/MM/dd HH:mm')}"></span>
-					・by <span th:text="${accountNames[post.accountId]}"></span>
-				</p>
-				<p class="card-excerpt" th:text="${post.article}"></p>
-				<a class="card-link"
-				   th:href="@{/blog/detail/{id}(id=${post.blogId})}"
-				   th:if="${post != null and post.blogId != null}">続きを読む →</a>
-			</article>
+		<section class="cards" th:if="${posts != null and !#lists.isEmpty(posts)}">
+		  <article class="card" th:each="post : ${posts}">
+		    <h3 th:text="${post.blogTitle}"></h3>
+		    <p>
+		      <span th:text="${#dates.format(post.createdAt,'yyyy/MM/dd HH:mm')}"></span>
+		      ・by <span th:text="${accountNames[post.accountId]}"></span>
+		    </p>
+		    <a th:href="@{/blog/detail/{id}(id=${post.blogId})}">続きを読む →</a>
+		  </article>
 		</section>
-
-		<section class="cards" th:if="${#lists.isEmpty(recentPosts)}">
-			<p>まだ記事がありません。最初の投稿を作成しましょう！</p>
+		
+		<section class="cards" th:if="${posts == null or #lists.isEmpty(posts)}">
+		  <p>まだ記事がありません。最初の投稿を作成しましょう！</p>
 		</section>
 	</main>
 	</main>

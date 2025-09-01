@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 import myblogpractice.com.models.dao.AccountDao;
@@ -36,55 +37,82 @@ public class AccountBarController {
 		session.invalidate();
 		return "redirect:/login";
 	}
-
+	
+	// ログアウト処理（GETとPOST両方に対応するための別メソッド）
 	@RequestMapping(value = "/logout", method = { RequestMethod.GET, RequestMethod.POST })
 	public String adminLogoutdouble() {
+		 // sessionの無効化
 		session.invalidate();
 		return "redirect:/login";
 	}
 
+	// ブログ投稿登録画面にアクセス
 	@GetMapping("/blog/register")
-	public String blogRegisterAccess(Model model) {
-		Account login = (Account) session.getAttribute("loginAccountInfo");
-		if (login == null) {
-			return "redirect:/login";
-		} else {
-			model.addAttribute("userName", login.getAccountName());
-			model.addAttribute("posts", blogService.findRecentPostsByUser(login.getAccountId()));
-			return "blog_register.html";
-		}
+	public String blogRegisterAccess(
+	        @RequestParam(value = "editId", required = false) Long editId,
+	        Model model) {
+
+	    Account login = (Account) session.getAttribute("loginAccountInfo");
+	    if (login == null) {
+	        return "redirect:/login";
+	    }
+
+	    model.addAttribute("userName", login.getAccountName());
+
+	    
+	    List<Blog> posts = blogService.findRecentPostsByUser(login.getAccountId());
+	    model.addAttribute("posts", posts);
+
+	    
+	    if (!model.containsAttribute("post")) {
+	        Blog form = null;
+	        if (editId != null) {
+	            form = blogService.findByblogId(editId);
+	            // 所有者チェック
+	            if (form == null || !login.getAccountId().equals(form.getAccountId())) {
+	                form = new Blog();
+	                form.setVisibility(1);
+	            }
+	        } else {
+	            form = new Blog();
+	            form.setVisibility(1);
+	        }
+	        model.addAttribute("post", form);
+	    }
+
+	    return "blog_register"; 
 	}
 
+	// /blog_Register にアクセスした場合、/blog/register にリダイレクト
 	@GetMapping("/blog_Register")
 	public String blogRegisterAlias() {
-		return "redirect:/blog/register";
+	    return "redirect:/blog/register";
 	}
 
+	// ブログのウェルカム画面にアクセス
 	@GetMapping("/blog/welcome")
 	public String blogWelcomeAccess(Model model) {
+	    Account login = (Account) session.getAttribute("loginAccountInfo");
+	    if (login == null) {
+	        return "redirect:/login";
+	    }
 
-		Account login = (Account) session.getAttribute("loginAccountInfo");
+	    model.addAttribute("userName", login.getAccountName());
 
-		if (login == null) {
-			return "redirect:/login";
-		} else {
+	   
+	    List<Blog> posts = blogService.accessWithUser(login.getAccountId());
+	    model.addAttribute("posts", posts);
 
-			List<Blog> posts = blogService.accessWithUser(login.getAccountId());
-			Map<Long, String> accountNames = new HashMap<>();
-			for (Blog b : posts) {
-				Account author = accountDao.findByAccountId(b.getAccountId());
-				if (author != null) {
-					accountNames.put(b.getAccountId(), author.getAccountName());
-				}
-			}
-			model.addAttribute("post", posts);
-			model.addAttribute("accountNames", accountNames);
-			model.addAttribute("userName", login.getAccountName());
-			model.addAttribute("recentPosts", posts);
-			model.addAttribute("userName", login.getAccountName());
-			model.addAttribute("posts", blogService.findRecentPostsByUser(login.getAccountId()));
-			model.addAttribute("recentPosts", blogService.findRecentPostsByUser(login.getAccountId()));
-			return "welcome.html";
-		}
+	    
+	    Map<Long, String> accountNames = new HashMap<>();
+	    for (Blog b : posts) {
+	        Account author = accountDao.findByAccountId(b.getAccountId());
+	        if (author != null) {
+	            accountNames.put(b.getAccountId(), author.getAccountName());
+	        }
+	    }
+	    model.addAttribute("accountNames", accountNames);
+
+	    return "welcome"; 
 	}
 }

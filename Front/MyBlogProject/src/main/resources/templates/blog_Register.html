@@ -66,8 +66,8 @@
 								<input type="hidden" name="blogId" th:value="${blog.blogId}">
 								<select name="visibility">
 								  <option value="1" th:selected="${blog.visibility == 1}">公開</option>
-								  <option value="2" th:selected="${blog.visibility == 2}">公開(コメント不可)</option>
-								  <option value="3" th:selected="${blog.visibility == 3}">非公開</option>
+								  <option value="3" th:selected="${blog.visibility == 3}">公開(コメント不可)</option>
+								  <option value="2" th:selected="${blog.visibility == 2}">非公開</option>
 								</select>
 						<td>
 							<button type="submit" class="btn ghost sm">保存</button>
