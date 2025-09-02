@@ -22,9 +22,9 @@ Blog は Spring Boot で開発した個人向けブログアプリです。
 
 ## ⚙ 使用技術
 - バックエンド：Java 17 / Spring Boot / JPA
-- フロントエンド：HTML / CSS / JavaScript / Thymeleaf
+- フロントエンド：HTML / CSS / JavaScript 
 - データベース：PostgreSQL
-- ビルド・管理：Maven / GitHub
+- ビルド・管理： GitHub
 
 ---
 
@@ -60,3 +60,5 @@ CREATE TABLE comments (
   parent_comment_id BIGINT REFERENCES comments(id),
   created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+## URL設計
