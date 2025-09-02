@@ -4,11 +4,6 @@
 - プロジェクト概要
 - 使用技術
 - テーブル設計
-- URL設計
-- ディレクトリ構成
-- 機能一覧／工夫した点
-- セットアップ & 実行方法
-- 今後の課題
 - 作成者情報
 
 ---
@@ -61,4 +56,6 @@ CREATE TABLE comments (
   created_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-## URL設計
+## 作成者情報
+- 名前：ショウ　ミンゴ
+- 所属：MCT JAPAN
