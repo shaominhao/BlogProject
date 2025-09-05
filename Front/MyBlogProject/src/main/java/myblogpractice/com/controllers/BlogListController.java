@@ -63,7 +63,7 @@ public class BlogListController {
 		    if (q != null && !q.trim().isEmpty()) {
 		    	 // 検索キーワードがある場合、自分の投稿を検索
 		        String kw = q.trim();
-		        posts = blogService.searchMyPosts(uid, kw);   
+		        posts = blogService.searchAllAccessible(uid, kw);   
 		        
 	            // 検索結果が1件のみの場合、詳細画面に直接リダイレクト
 		        if (posts.size() == 1) {
@@ -73,7 +73,7 @@ public class BlogListController {
 		        model.addAttribute("q", kw);
 		    } else {
 		    	// 検索キーワードがない場合、管理者としてアクセス可能な投稿を取得
-		        posts = blogService.accessWithAdmin(uid);
+		        posts = blogService.accessWithUser(uid);
 		    }
 		
 		 // 投稿ごとに著者名を取得してMapに格納

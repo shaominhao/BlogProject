@@ -1,5 +1,6 @@
 package myblogpractice.com.models.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -45,5 +46,35 @@ public interface BlogDao extends JpaRepository<Blog, Long> {
 	           "      LOWER(b.article)      LIKE LOWER(CONCAT('%', :kw, '%'))" +
 	           ") ORDER BY b.createdAt DESC")
 	List<Blog> searchMyPosts(@Param("uid") Long uid, @Param("kw") String keyward);
+	
+	// 
+    @Query("""
+           SELECT b FROM Blog b
+           WHERE b.accountId = :uid
+             AND (LOWER(b.blogTitle)    LIKE LOWER(CONCAT('%', :kw, '%'))
+              OR  LOWER(b.categoryName) LIKE LOWER(CONCAT('%', :kw, '%'))
+              OR  LOWER(b.article)      LIKE LOWER(CONCAT('%', :kw, '%')))
+           ORDER BY b.createdAt DESC
+           """)
+    List<Blog> searchMine(@Param("uid") Long uid, @Param("kw") String kw);
+
+    // 
+    @Query("""
+           SELECT b FROM Blog b
+           WHERE b.accountId <> :uid
+             AND b.visibility IN :vis
+             AND (LOWER(b.blogTitle)    LIKE LOWER(CONCAT('%', :kw, '%'))
+              OR  LOWER(b.categoryName) LIKE LOWER(CONCAT('%', :kw, '%'))
+              OR  LOWER(b.article)      LIKE LOWER(CONCAT('%', :kw, '%')))
+           ORDER BY b.createdAt DESC
+           """)
+    List<Blog> searchOthersVisible(@Param("uid") Long uid,
+                                   @Param("vis") Collection<Integer> vis,
+                                   @Param("kw")  String kw);
+
+ 
+    List<Blog> findByAccountIdNotAndVisibilityInOrderByCreatedAtDesc(
+            Long accountId, Collection<Integer> visibilities
+    );
 
 }

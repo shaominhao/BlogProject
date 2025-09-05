@@ -67,7 +67,7 @@ public class AccountLoginController {
 			model.addAttribute("accountNames", accountNames);
 			model.addAttribute("userName", account.getAccountName());
 			model.addAttribute("recentPosts", posts);
-			return "welcome";
+			return "welcome.html";
 		}
 	}
 }

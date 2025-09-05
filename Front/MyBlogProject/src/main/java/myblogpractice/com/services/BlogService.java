@@ -103,7 +103,7 @@ public class BlogService {
 	    List<Blog> othersNoCmt = blogDao.findByAccountIdNotAndVisibility(uid, 3);
 
 	    List<Blog> all = new java.util.ArrayList<>();
-	    if (mine != null) all.addAll(mine);
+	    if (mine != null) {all.addAll(mine);}
 	    if (othersPub != null) all.addAll(othersPub);
 	    if (othersNoCmt != null) all.addAll(othersNoCmt);
 
@@ -135,6 +135,35 @@ public class BlogService {
 	public List<Blog> searchMyPosts(Long uid, String keyword) {
 		return blogDao.searchMyPosts(uid, keyword);
 	}
+	
+	public List<Blog> listAllAccessible(Long uid) {
+        List<Blog> mine   = blogDao.findByAccountIdOrderByCreatedAtDesc(uid);
+        List<Blog> others = blogDao.findByAccountIdNotAndVisibilityInOrderByCreatedAtDesc(
+                uid, java.util.List.of(1, 2)
+        );
+
+        java.util.ArrayList<Blog> all = new java.util.ArrayList<>();
+        if (mine   != null) all.addAll(mine);
+        if (others != null) all.addAll(others);
+
+        all.sort(java.util.Comparator.comparing(
+                Blog::getCreatedAt,
+                java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())
+        ).reversed());
+        return all;
+    }
+
+    // 
 
 
+    private static final List<Integer> PUBLIC_VIS = List.of(1, 3);
+
+    public List<Blog> searchAllAccessible(Long uid, String kw) {
+        final String k = kw == null ? "" : kw.trim();
+        List<Blog> mine   = blogDao.searchMine(uid, k);
+        List<Blog> others = blogDao.searchOthersVisible(uid, PUBLIC_VIS, k);
+        return java.util.stream.Stream.concat(mine.stream(), others.stream())
+                .sorted(java.util.Comparator.comparing(Blog::getCreatedAt).reversed())
+                .toList();
+    }
 }
